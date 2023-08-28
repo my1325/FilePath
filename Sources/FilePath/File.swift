@@ -84,8 +84,8 @@ extension FilePath {
     }
 }
 
-struct File: FilePath {
-    let path: String
+public struct File: FilePath {
+    public let path: String
 }
 
 public extension DirectoryPath {
