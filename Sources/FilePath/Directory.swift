@@ -15,6 +15,10 @@ public protocol DirectoryPath: Path {
     var isEmpty: Bool { get }
         
     func appendConponent(_ name: String) -> DirectoryPath
+    
+    func directoryIterator() -> DirectoryIterator
+    
+    func forEach(_ closure: (Path) throws -> Void) rethrows
 }
 
 public extension DirectoryPath {
@@ -66,6 +70,14 @@ public extension DirectoryPath {
             }
         }
     }
+    
+    func directoryIterator() -> DirectoryIterator {
+        DirectoryIterator(directory: self)
+    }
+    
+    func forEach(_ closure: (Path) throws -> Void) rethrows {
+        try directoryIterator().forEach(closure)
+    }
 }
 
 public struct Directory {
@@ -75,15 +87,33 @@ public struct Directory {
     public static let library = Directory(path: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
     public static let cache = Directory(path: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0])
     
-    public static let desktop = Directory(path: NSSearchPathForDirectoriesInDomains(.desktopDirectory, .userDomainMask, true)[0])
-    public static let download = Directory(path: NSSearchPathForDirectoriesInDomains(.downloadsDirectory, .userDomainMask, true)[0])
-    
     public static let infoPlist = Directory(path: Bundle.main.path(forResource: "Info", ofType: "plist")!)
 
     public static let temp = Directory(path: NSTemporaryDirectory())
-    public static let home = Directory(path: NSHomeDirectory())
     
     public static let mainBundle = Directory(path: Bundle.main.bundlePath)
+
+    @available(macOS 10.13, *)
+    public static let desktop = Directory(path: String(format: "%@/Desktop", pwd))
+    @available(macOS 10.13, *)
+    public static let download = Directory(path: String(format: "%@/Downloads", pwd))
+    @available(macOS 10.13, *)
+    public static let home = Directory(path: pwd)
+    
+    @available(macOS 10.13, *)
+    private static let homePath: String = {
+        let homeDirectory = NSHomeDirectory()
+        let homeComponents = homeDirectory.components(separatedBy: "/")
+        return Array(homeComponents[0 ..< 3]).joined(separator: "/")
+    }()
+    
+    @available(macOS 10.13, *)
+    private static let pwd: String = {
+        if let pw = getpwuid(getuid()), var pw_dir = pw.pointee.pw_dir {
+            return String(cString: pw_dir)
+        }
+        return homePath
+    }()
 }
 
 extension Directory: DirectoryPath {
