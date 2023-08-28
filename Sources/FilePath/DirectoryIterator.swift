@@ -23,6 +23,7 @@ public class DirectoryIterator: Sequence, IteratorProtocol {
     }
     
     public func next() -> Element? {
-        Directory.instanceOfPath(subpaths[nextIndex])
+        defer { nextIndex += 1 }
+        return Directory.instanceOfPath(subpaths[nextIndex])
     }
 }
