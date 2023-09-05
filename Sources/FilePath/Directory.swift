@@ -7,21 +7,21 @@
 
 import Foundation
 
-public protocol DirectoryPath: Path {
-    var parent: DirectoryPath { get }
+public protocol DirectoryPathProtocol: PathProtocol {
+    var parent: DirectoryPathProtocol { get }
     
     var subpaths: [String] { get }
     
     var isEmpty: Bool { get }
         
-    func appendConponent(_ name: String) -> DirectoryPath
+    func appendConponent(_ name: String) -> DirectoryPathProtocol
     
     func directoryIterator() -> DirectoryIterator
     
-    func forEach(_ closure: (Path) throws -> Void) rethrows
+    func forEach(_ closure: (PathProtocol) throws -> Void) rethrows
 }
 
-public extension DirectoryPath {
+public extension DirectoryPathProtocol {
     var subpaths: [String] {
         FileManager.default.subpaths(atPath: path) ?? []
     }
@@ -36,8 +36,8 @@ public extension DirectoryPath {
         try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
     }
     
-    func rename(_ newName: String) throws -> Path {
-        let newPath: DirectoryPath = parent.appendConponent(newName)
+    func rename(_ newName: String) throws -> PathProtocol {
+        let newPath: DirectoryPathProtocol = parent.appendConponent(newName)
         try FileManager.default.moveItem(atPath: path, toPath: newPath.path)
         return newPath
     }
@@ -75,30 +75,30 @@ public extension DirectoryPath {
         DirectoryIterator(directory: self)
     }
     
-    func forEach(_ closure: (Path) throws -> Void) rethrows {
+    func forEach(_ closure: (PathProtocol) throws -> Void) rethrows {
         try directoryIterator().forEach(closure)
     }
 }
 
-public struct Directory {
+public struct DirectoryPath {
     public let path: String
     
-    public static let document = Directory(path: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
-    public static let library = Directory(path: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
-    public static let cache = Directory(path: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0])
+    public static let document = DirectoryPath(path: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
+    public static let library = DirectoryPath(path: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
+    public static let cache = DirectoryPath(path: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0])
     
-    public static let infoPlist = Directory(path: Bundle.main.path(forResource: "Info", ofType: "plist")!)
+    public static let infoPlist = DirectoryPath(path: Bundle.main.path(forResource: "Info", ofType: "plist")!)
 
-    public static let temp = Directory(path: NSTemporaryDirectory())
+    public static let temp = DirectoryPath(path: NSTemporaryDirectory())
     
-    public static let mainBundle = Directory(path: Bundle.main.bundlePath)
+    public static let mainBundle = DirectoryPath(path: Bundle.main.bundlePath)
 
     @available(macOS 10.13, *)
-    public static let desktop = Directory(path: String(format: "%@/Desktop", pwd))
+    public static let desktop = DirectoryPath(path: String(format: "%@/Desktop", pwd))
     @available(macOS 10.13, *)
-    public static let download = Directory(path: String(format: "%@/Downloads", pwd))
+    public static let download = DirectoryPath(path: String(format: "%@/Downloads", pwd))
     @available(macOS 10.13, *)
-    public static let home = Directory(path: pwd)
+    public static let home = DirectoryPath(path: pwd)
     
     @available(macOS 10.13, *)
     private static let homePath: String = {
@@ -116,16 +116,16 @@ public struct Directory {
     }()
 }
 
-extension Directory: DirectoryPath {
-    public func appendConponent(_ name: String) -> DirectoryPath {
+extension DirectoryPath: DirectoryPathProtocol {
+    public func appendConponent(_ name: String) -> DirectoryPathProtocol {
         let fullPath = String(format: "%@/%@", path, name)
-        return Directory(path: fullPath)
+        return DirectoryPath(path: fullPath)
     }
     
-    public var parent: DirectoryPath {
+    public var parent: DirectoryPathProtocol {
         if let index = path.lastIndex(of: "/") {
             let range = path.startIndex ..< index
-            return Directory(path: String(path[range]))
+            return DirectoryPath(path: String(path[range]))
         }
         return self
     }

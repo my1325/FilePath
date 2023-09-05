@@ -7,8 +7,8 @@
 
 import Foundation
 
-public protocol FilePath: Path {
-    var parent: DirectoryPath { get }
+public protocol FilePathProtocol: PathProtocol {
+    var parent: DirectoryPathProtocol { get }
     
     var pathExtension: String { get }
     
@@ -23,7 +23,7 @@ public protocol FilePath: Path {
     func readLines() throws -> [String]
 }
 
-extension FilePath {
+extension FilePathProtocol {
     public var pathExtension: String {
         if let index = path.lastIndex(of: ".") {
             let startIndex = path.index(index, offsetBy: 1)
@@ -32,12 +32,12 @@ extension FilePath {
         return ""
     }
     
-    public var parent: DirectoryPath {
+    public var parent: DirectoryPathProtocol {
         if let index = path.lastIndex(of: "/") {
             let range = path.startIndex ..< index
-            return Directory(path: String(path[range]))
+            return DirectoryPath(path: String(path[range]))
         }
-        return Directory(path: path)
+        return DirectoryPath(path: path)
     }
     
     public func createIfNotExists() throws {
@@ -46,8 +46,8 @@ extension FilePath {
         FileManager.default.createFile(atPath: path, contents: nil)
     }
     
-    public func rename(_ newName: String) throws -> Path {
-        let newPath: FilePath = parent.appendFileName(newName)
+    public func rename(_ newName: String) throws -> PathProtocol {
+        let newPath: FilePathProtocol = parent.appendFileName(newName)
         try FileManager.default.moveItem(atPath: path, toPath: newPath.path)
         return newPath
     }
@@ -84,12 +84,15 @@ extension FilePath {
     }
 }
 
-public struct File: FilePath {
+public struct FilePath: FilePathProtocol {
     public let path: String
+    public init(path: String) {
+        self.path = path
+    }
 }
 
-public extension DirectoryPath {
-    func appendFileName(_ name: String, ext: String = "") -> FilePath {
-        File(path: String(format: "%@/%@%@", path, name, ext))
+public extension DirectoryPathProtocol {
+    func appendFileName(_ name: String, ext: String = "") -> FilePathProtocol {
+        FilePath(path: String(format: "%@/%@.%@", path, name, ext))
     }
 }

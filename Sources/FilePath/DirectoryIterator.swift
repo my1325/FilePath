@@ -8,11 +8,11 @@
 import Foundation
 
 public class DirectoryIterator: Sequence, IteratorProtocol {
-    public typealias Element = Path
+    public typealias Element = PathProtocol
     private var nextIndex = 0
-    let directory: DirectoryPath
+    let directory: DirectoryPathProtocol
     let subpaths: [String]
-    init(directory: DirectoryPath) {
+    init(directory: DirectoryPathProtocol) {
         self.directory = directory
         self.subpaths = directory.subpaths
     }
@@ -24,6 +24,6 @@ public class DirectoryIterator: Sequence, IteratorProtocol {
     
     public func next() -> Element? {
         defer { nextIndex += 1 }
-        return Directory.instanceOfPath(subpaths[nextIndex])
+        return DirectoryPath(path: subpaths[nextIndex])
     }
 }

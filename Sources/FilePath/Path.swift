@@ -7,7 +7,7 @@
 
 import Foundation
 
-public protocol Path {
+public protocol PathProtocol {
     var path: String { get }
     
     var isExists: Bool { get }
@@ -18,16 +18,16 @@ public protocol Path {
     
     var isDirectory: Bool { get }
         
-    func moveToNewPath(_ newPath: Path) throws
+    func moveToNewPath(_ newPath: PathProtocol) throws
 
-    func rename(_ newName: String) throws -> Path
+    func rename(_ newName: String) throws -> PathProtocol
     
     func createIfNotExists() throws
     
     func remove() throws
 }
 
-public extension Path {
+public extension PathProtocol {
     var isFile: Bool {
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) {
@@ -56,17 +56,19 @@ public extension Path {
         return path
     }
     
-    func moveToNewPath(_ newPath: Path) throws {
+    func moveToNewPath(_ newPath: PathProtocol) throws {
         try FileManager.default.moveItem(atPath: self.path, toPath: newPath.path)
     }
-    
-    static func instanceOfPath(_ path: String) -> Path? {
+}
+
+public struct Path {
+    public static func instanceOfPath(_ path: String) -> PathProtocol? {
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) {
             if isDirectory.boolValue {
-                return Directory(path: path)
+                return DirectoryPath(path: path)
             } else {
-                return File(path: path)
+                return FilePath(path: path)
             }
         }
         return nil
