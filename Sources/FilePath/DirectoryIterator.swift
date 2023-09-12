@@ -24,6 +24,10 @@ public class DirectoryIterator: Sequence, IteratorProtocol {
     
     public func next() -> Element? {
         defer { nextIndex += 1 }
-        return DirectoryPath(path: subpaths[nextIndex])
+        if nextIndex < subpaths.count {
+            return DirectoryPath(path: subpaths[nextIndex])
+        } else {
+            return nil
+        }
     }
 }
