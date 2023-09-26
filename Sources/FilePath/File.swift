@@ -112,7 +112,7 @@ public extension DirectoryPathProtocol {
         if !ext.isEmpty {
             return FilePath(path: String(format: "%@/%@.%@", path, name, ext))
         } else {
-            return FilePath(path: name)
+            return FilePath(path: String(format: "%@/%@", path, name))
         }
     }
 }
