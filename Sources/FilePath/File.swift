@@ -109,6 +109,10 @@ public struct FilePath: FilePathProtocol {
 
 public extension DirectoryPathProtocol {
     func appendFileName(_ name: String, ext: String = "") -> FilePathProtocol {
-        FilePath(path: String(format: "%@/%@.%@", path, name, ext))
+        if !ext.isEmpty {
+            return FilePath(path: String(format: "%@/%@.%@", path, name, ext))
+        } else {
+            return FilePath(path: name)
+        }
     }
 }
