@@ -100,6 +100,12 @@ public struct DirectoryPath {
     @available(macOS 10.13, *)
     public static let home = DirectoryPath(path: pwd)
     
+    public static let current = DirectoryPath(path: FileManager.default.currentDirectoryPath)
+    
+    public static func changeToCurrent(_ newCurrent: DirectoryPath) {
+        FileManager.default.changeCurrentDirectoryPath(newCurrent.path)
+    }
+    
     @available(macOS 10.13, *)
     private static let homePath: String = {
         let homeDirectory = NSHomeDirectory()
