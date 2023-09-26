@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 
- s.name             = "FilePath"
+ s.name             = "GeFilePath"
  s.version           = "0.0.1"
  s.summary         = "provide tool to read or write property list file and json file"
  s.homepage        = "https://github.com/my1325/FilePath.git"
