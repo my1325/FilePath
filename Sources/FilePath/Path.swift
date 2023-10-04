@@ -17,6 +17,8 @@ public protocol PathProtocol {
     var isFile: Bool { get }
     
     var isDirectory: Bool { get }
+    
+    func copyToPath(_ newPath: PathProtocol) throws
         
     func moveToNewPath(_ newPath: PathProtocol) throws
 
@@ -58,6 +60,10 @@ public extension PathProtocol {
     
     func moveToNewPath(_ newPath: PathProtocol) throws {
         try FileManager.default.moveItem(atPath: self.path, toPath: newPath.path)
+    }
+    
+    func copyToPath(_ newPath: PathProtocol) throws {
+        try FileManager.default.copyItem(atPath: path, toPath: newPath.path)
     }
 }
 
