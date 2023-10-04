@@ -83,6 +83,10 @@ public extension DirectoryPathProtocol {
 public struct DirectoryPath {
     public let path: String
     
+    public init(path: String) {
+        self.path = path
+    }
+    
     public static let document = DirectoryPath(path: NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0])
     public static let library = DirectoryPath(path: NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)[0])
     public static let cache = DirectoryPath(path: NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true)[0])
