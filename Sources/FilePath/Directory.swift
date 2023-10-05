@@ -29,7 +29,12 @@ public protocol DirectoryPathProtocol: PathProtocol {
 
 public extension DirectoryPathProtocol {
     var subpaths: [String] {
-        FileManager.default.subpaths(atPath: path) ?? []
+        do {
+            return try FileManager.default.contentsOfDirectory(atPath: path)
+        } catch {
+            print(error)
+            return []
+        }
     }
     
     var isEmpty: Bool {
