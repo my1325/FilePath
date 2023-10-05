@@ -13,6 +13,12 @@ public protocol DirectoryPathProtocol: PathProtocol {
     var subpaths: [String] { get }
     
     var isEmpty: Bool { get }
+    
+    var isBundle: Bool { get }
+    
+    var isZip: Bool { get }
+    
+    var isAssets: Bool { get }
         
     func appendConponent(_ name: String) -> DirectoryPathProtocol
     
@@ -69,6 +75,18 @@ public extension DirectoryPathProtocol {
                 }
             }
         }
+    }
+    
+    var isBundle: Bool {
+        pathExtension == "bundle"
+    }
+    
+    var isZip: Bool {
+        pathExtension == "zip"
+    }
+
+    var isAssets: Bool {
+        pathExtension == "xcassets"
     }
     
     func directoryIterator() -> DirectoryIterator {

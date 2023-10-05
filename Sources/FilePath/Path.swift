@@ -18,6 +18,8 @@ public protocol PathProtocol {
     
     var isDirectory: Bool { get }
     
+    var pathExtension: String { get }
+    
     func copyToPath(_ newPath: PathProtocol) throws
         
     func moveToNewPath(_ newPath: PathProtocol) throws
@@ -30,6 +32,15 @@ public protocol PathProtocol {
 }
 
 public extension PathProtocol {
+    
+    var pathExtension: String {
+        if let index = path.lastIndex(of: ".") {
+            let startIndex = path.index(index, offsetBy: 1)
+            return String(path[startIndex ..< path.endIndex])
+        }
+        return ""
+    }
+    
     var isFile: Bool {
         var isDirectory: ObjCBool = false
         if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) {

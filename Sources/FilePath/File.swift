@@ -9,9 +9,7 @@ import Foundation
 
 public protocol FilePathProtocol: PathProtocol {
     var parent: DirectoryPathProtocol { get }
-    
-    var pathExtension: String { get }
-    
+        
     func writeData(_ data: Data) throws
     
     func readData() throws -> Data
@@ -24,13 +22,6 @@ public protocol FilePathProtocol: PathProtocol {
 }
 
 public extension FilePathProtocol {
-    var pathExtension: String {
-        if let index = path.lastIndex(of: ".") {
-            let startIndex = path.index(index, offsetBy: 1)
-            return String(path[startIndex ..< path.endIndex])
-        }
-        return ""
-    }
     
     var parent: DirectoryPathProtocol {
         if let index = path.lastIndex(of: "/") {
