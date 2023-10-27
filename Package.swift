@@ -5,12 +5,12 @@ import PackageDescription
 
 let package = Package(
     name: "FilePath",
-    platforms: [.macOS(.v10_13)],
+    platforms: [.macOS(.v10_13), .iOS(.v13)],
     products: [
-        .library(name: "FilePath", targets: ["FilePath"]),
+        .library(name: "FilePath", targets: ["Path"]),
     ],
     targets: [
-        .target(name: "FilePath"),
+        .target(name: "Path")
     ]
 )
 

@@ -17,8 +17,9 @@ public class FileIterator: Sequence, IteratorProtocol {
     var buffer: Data
     var isAtEOF: Bool = false
     
-    init(url: URL, delimeter: String = "\n", encoding: String.Encoding = .utf8, chunkSize: Int = 4096) throws
+    init?(_ url: URL, delimeter: String = "\n", encoding: String.Encoding = .utf8, chunkSize: Int = 4096) throws
     {
+        guard url.isFileURL else { return nil }
         fileHandle = try FileHandle(forReadingFrom: url)
         self.chunkSize = chunkSize
         self.encoding = encoding
